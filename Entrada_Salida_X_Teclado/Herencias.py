@@ -21,3 +21,5 @@ perro.habla()
 
 abeja = Abeja("MONO")
 abeja.descripcion()
+
+#TIPO DE ERRORES CONOCIDOS POR UTILIZAR HERENCIA
