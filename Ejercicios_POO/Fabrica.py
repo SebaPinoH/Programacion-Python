@@ -1,0 +1,1 @@
+#Crear una Fabrica, que tenga como atributos, color y precio, crear dos clases que hereden de fabrica, en la cual son moto y auto, creando el metodo que muestre la cantidad de llantas, color y precio de ambos transporte, y que se muestre todo por pantalla.
