@@ -1,4 +1,15 @@
+***************************************************************************************************************
+Informacion Basica 
+***************************************************************************************************************
+1.- Es un lenguaje de programacion de alto nivel.
+2.- Esta orientada a Objetos
+3.- Es de codigo abierto, es decir, puedes modificar, eliminar, leer, reescribir el codigo fuente
+4.- Es un lenguaje Interpretado
+
+
+***************************************************************************************************************
 Consejos y Reglas para Python
+***************************************************************************************************************
 
 1.- No se puede utilizar variables reservadas del leguaje propio de lenguaje.
 
