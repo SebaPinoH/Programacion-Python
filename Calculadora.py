@@ -2,75 +2,101 @@
 
 import tkinter as tk
 
-def obtener_numeros():
-    """Función auxiliar para validar e ingresar los dos valores."""
+def al_presionar_boton(valor):
+    """Agrega el texto del botón presionado al display."""
+    expresion_actual = display.get()
+    display.delete(0, tk.END)
+    display.insert(0, expresion_actual + str(valor))
+
+def limpiar_pantalla():
+    """Borra todo el contenido del display."""
+    display.delete(0, tk.END)
+
+def borrar_ultimo():
+    """Borra el último carácter ingresado."""
+    expresion_actual = display.get()
+    display.delete(0, tk.END)
+    display.insert(0, expresion_actual[:-1])
+
+def calcular_resultado():
+    """Evalúa la expresión matemática ingresada."""
     try:
-        a = float(entry_a.get())
-        b = float(entry_b.get())
-        return a, b
-    except ValueError:
-        lbl_resultado.config(text="Por favor, ingresa Solo Numeros")
-        return None, None
-
-def sumar():
-    a, b = obtener_numeros()
-    if a is not None and b is not None:
-        lbl_resultado.config(text=f"Resultado: {a + b}")
-
-def restar():
-    a, b = obtener_numeros()
-    if a is not None and b is not None:
-        lbl_resultado.config(text=f"Resultado: {a - b}")
-
-def multiplicar():
-    a, b = obtener_numeros()
-    if a is not None and b is not None:
-        lbl_resultado.config(text=f"Resultado: {a * b}")
-
-def dividir():
-    a, b = obtener_numeros()
-    if a is not None and b is not None:
-        if b == 0:
-            lbl_resultado.config(text="No se puede dividir por cero")
+        expresion = display.get()
+        # Reemplazamos los símbolos visuales por los operadores de Python
+        expresion_eval = expresion.replace("×", "*").replace("÷", "/")
+        resultado = eval(expresion_eval)
+        
+        display.delete(0, tk.END)
+        # Si el resultado es un entero exacto (ej. 5.0), lo mostramos como entero (5)
+        if isinstance(resultado, float) and resultado.is_integer():
+            display.insert(0, str(int(resultado)))
         else:
-            lbl_resultado.config(text=f"Resultado: {a / b}")
+            display.insert(0, str(resultado))
+    except ZeroDivisionError:
+        display.delete(0, tk.END)
+        display.insert(0, "Error: Div por 0")
+    except Exception:
+        display.delete(0, tk.END)
+        display.insert(0, "Error")
 
 # Ventana principal
 ventana = tk.Tk()
-ventana.title("Calculadora de Operaciones")
-ventana.geometry("340x260")
+ventana.title("Calculadora")
+ventana.geometry("300x380")
 ventana.resizable(False, False)
 
-# Primer número
-lbl_a = tk.Label(ventana, text="Primero Numero:")
-lbl_a.pack(pady=(15, 2))
-entry_a = tk.Entry(ventana, justify="center")
-entry_a.pack(pady=2)
+# --- DISPLAY / PANTALLA ---
+display = tk.Entry(
+    ventana, 
+    font=("Arial", 20, "bold"), 
+    justify="right", 
+    bd=10, 
+    relief=tk.FLAT
+)
+display.pack(fill="x", padx=15, pady=15)
 
-# Segundo número
-lbl_b = tk.Label(ventana, text="Segundo Numero:")
-lbl_b.pack(pady=(10, 2))
-entry_b = tk.Entry(ventana, justify="center")
-entry_b.pack(pady=2)
-
-# Contenedor para los botones alineados horizontalmente
+# --- CONTENEDOR DE BOTONES (GRID) ---
 frame_botones = tk.Frame(ventana)
-frame_botones.pack(pady=15)
+frame_botones.pack(expand=True, fill="both", padx=10, pady=(0, 10))
 
-btn_sumar = tk.Button(frame_botones, text="+", width=4, command=sumar)
-btn_sumar.pack(side="left", padx=3)
+# Configurar peso de filas y columnas para que se distribuyan uniformemente
+for i in range(5):
+    frame_botones.rowconfigure(i, weight=1)
+for j in range(4):
+    frame_botones.columnconfigure(j, weight=1)
 
-btn_restar = tk.Button(frame_botones, text="-", width=4, command=restar)
-btn_restar.pack(side="left", padx=3)
+# Distribución de la botonera: (Texto, Fila, Columna)
+botones = [
+    ('C', 0, 0), ('←', 0, 1), ('÷', 0, 2), ('×', 0, 3),
+    ('7', 1, 0), ('8', 1, 1), ('9', 1, 2), ('-', 1, 3),
+    ('4', 2, 0), ('5', 2, 1), ('6', 2, 2), ('+', 2, 3),
+    ('1', 3, 0), ('2', 3, 1), ('3', 3, 2), ('=', 3, 3),
+    ('0', 4, 0), ('.', 4, 2)
+]
 
-btn_multiplicar = tk.Button(frame_botones, text="×", width=4, command=multiplicar)
-btn_multiplicar.pack(side="left", padx=3)
+# Creación dinámica de botones
+for texto, fila, columna in botones:
+    if texto == 'C':
+        cmd = limpiar_pantalla
+    elif texto == '←':
+        cmd = borrar_ultimo
+    elif texto == '=':
+        cmd = calcular_resultado
+    else:
+        # lambda t=texto asegura que pase el valor correcto de cada botón
+        cmd = lambda t=texto: al_presionar_boton(t)
 
-btn_dividir = tk.Button(frame_botones, text="÷", width=4, command=dividir)
-btn_dividir.pack(side="left", padx=3)
+    # El '0' abarca 2 columnas (columnspan=2)
+    colspan = 2 if texto == '0' else 1
+    # El '=' abarca 2 filas (rowspan=2)
+    rowspan = 2 if texto == '=' else 1
 
-# Etiqueta de resultado
-lbl_resultado = tk.Label(ventana, text="Resultado: ", font=("Arial", 11, "bold"))
-lbl_resultado.pack(pady=5)
+    btn = tk.Button(
+        frame_botones, 
+        text=texto, 
+        font=("Arial", 14, "bold"),
+        command=cmd
+    )
+    btn.grid(row=fila, column=columna, rowspan=rowspan, columnspan=colspan, sticky="nsew", padx=2, pady=2)
 
 ventana.mainloop()
