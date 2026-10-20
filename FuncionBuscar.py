@@ -18,5 +18,5 @@ print(f'Has .com: {has_com}')
 messy_name = '  sARaH dAVis  '
 print(f"Original name: '{messy_name}'")
 
-clean_name = messy_name.title()
-print(f"Clean name: '{clean_name}'")
+clean_name = messy_name.strip().title()
+print(f"Cleaned name: '{clean_name}'")
