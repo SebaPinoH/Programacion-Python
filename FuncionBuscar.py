@@ -11,3 +11,12 @@ print(f'Username: {username}')
 
 has_at = '@' in email
 print(f'Has @ symbol: {has_at}')
+
+has_com = '.com' in email
+print(f'Has .com: {has_com}')
+
+messy_name = '  sARaH dAVis  '
+print(f"Original name: '{messy_name}'")
+
+clean_name = messy_name.title()
+print(f"Clean name: '{clean_name}'")
